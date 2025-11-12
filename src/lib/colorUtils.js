@@ -1,7 +1,5 @@
 // src/lib/colorUtils.js
 
-// This is the new, single source of truth for user colors.
-// We map the *exact* animal name to a *specific* color.
 const COLOR_MAP = {
   'Tiger':  { tw: 'bg-blue-500', hex: '#3B82F6' },
   'Hippo':  { tw: 'bg-red-500', hex: '#EF4444' },
