@@ -1,22 +1,9 @@
 import React from 'react';
 import { Crown, Share2 } from 'lucide-react';
+// --- 1. IMPORT your new util ---
+import { getUserColor } from '../lib/colorUtils';
 
-// Helper function to get a consistent color for each user
-// so "Tiger" is always the same color.
-const getAvatarColor = (name) => {
-  const colors = [
-    'bg-blue-500', 'bg-red-500', 'bg-green-500', 'bg-purple-500', 
-    'bg-pink-500', 'bg-orange-500', 'bg-teal-500', 'bg-cyan-500'
-  ];
-  let hash = 0;
-  if (name.length === 0) return colors[0];
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-  const index = Math.abs(hash) % colors.length;
-  return colors[index];
-};
+// --- 2. DELETE the old getAvatarColor function that was here ---
 
 // The new dynamic component
 const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
@@ -39,7 +26,10 @@ const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
           const isYou = user.id === currentUserId;
           const isLion = user.isPrimary;
           const title = isYou ? `${user.name} (You)` : user.name;
-          const color = isLion ? 'bg-yellow-500' : getAvatarColor(user.name);
+          
+          // --- 3. CHANGE this line to use the new function ---
+          const color = isLion ? 'bg-yellow-500' : getUserColor(user.name).tw;
+          
           const initial = user.name ? user.name[0].toUpperCase() : '?';
 
           return (

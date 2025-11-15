@@ -3,12 +3,13 @@
 // This is the new, single source of truth for user colors.
 // We map the *exact* animal name to a *specific* color.
 const COLOR_MAP = {
+  'Lion':  { tw: 'bg-amber-500', hex: '#F59E0B' },
   'Tiger':  { tw: 'bg-blue-500', hex: '#3B82F6' },
   'Hippo':  { tw: 'bg-red-500', hex: '#EF4444' },
   'Zebra':  { tw: 'bg-green-500', hex: '#10B981' },
   'Rhino':  { tw: 'bg-purple-500', hex: '#8B5CF6' },
   'Panda':  { tw: 'bg-pink-500', hex: '#EC4899' },
-  'Eagle':  { tw: 'bg-amber-500', hex: '#F59E0B' },
+  'Eagle':  { tw: 'bg-gray-500', hex: '#6B7280' },
   'Koala':  { tw: 'bg-cyan-600', hex: '#06B6D4' },
   'Falcon': { tw: 'bg-indigo-500', hex: '#6366F1' },
   'Dolphin':{ tw: 'bg-teal-500', hex: '#14B8A6' }, // --- ADD THIS 9TH ANIMAL ---
