@@ -8,7 +8,6 @@ import {
 // --- Configuration ---
 const SERVER_URL = 'http://localhost:5001';
 
-// --- Helper Functions (Inlined) ---
 
 const getAuthToken = () => localStorage.getItem('token');
 
@@ -76,7 +75,6 @@ const apiService = {
 };
 
 
-// --- AppHeader Component (Inlined) ---
 const AppHeader = ({ onLogout }) => (
   <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
     <nav className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
@@ -100,7 +98,7 @@ const AppHeader = ({ onLogout }) => (
   </header>
 );
 
-// --- Create New Document Card (Smaller) ---
+
 const CreateNewCard = ({ onClick, isLoading }) => (
   <div className="w-full">
     <button
@@ -122,12 +120,12 @@ const CreateNewCard = ({ onClick, isLoading }) => (
   </div>
 );
 
-// --- Document Thumbnail Card (Smaller) ---
+
 const DocThumbnail = ({ doc, onDeleteSuccess, onRename }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(doc.title);
   const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false); // Manages its own deleting state
+  const [isDeleting, setIsDeleting] = useState(false); 
 
   const handleRenameSubmit = async () => {
     if (title === doc.title) {
@@ -147,19 +145,17 @@ const DocThumbnail = ({ doc, onDeleteSuccess, onRename }) => {
     }
   };
 
-  // --- DELETE FIX ---
-  // The card now handles its own deletion state
+
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete "${doc.title}"?`)) {
       setIsDeleting(true);
       try {
         await apiService.deleteDoc(doc.id);
-        // Call the parent to remove this from the list
         onDeleteSuccess(doc.id); 
       } catch (err) {
         console.error("Delete failed:", err);
         alert("Failed to delete document. Please try again.");
-        setIsDeleting(false); // Stop spinning on error
+        setIsDeleting(false); 
       }
     }
   };
@@ -169,7 +165,7 @@ const DocThumbnail = ({ doc, onDeleteSuccess, onRename }) => {
     else if (e.key === 'Escape') setIsEditing(false);
   };
 
-  // If deleting, show a spinner over the card
+
   if (isDeleting) {
     return (
       <div className="w-full">
@@ -245,8 +241,7 @@ const DocThumbnail = ({ doc, onDeleteSuccess, onRename }) => {
   );
 };
 
-// --- NEW: Empty Placeholder Card ---
-// This is the "simple box with no buttons" you requested
+
 const EmptyStateCard = () => (
   <div className="w-full">
     <div className="relative block w-full h-64 rounded-lg bg-gray-50 border-2 border-dashed border-gray-200">
@@ -289,13 +284,13 @@ const FullPageError = ({ onRetry }) => (
 );
 
 
-// --- Main MyDocsPage Component (Fully Updated) ---
+// --- Main MyDocsPage Component ---
 const MyDocsPage = ({ onLogout }) => {
   const [userName, setUserName] = useState('');
   const [docs, setDocs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [isPolling, setIsPolling] = useState(false); // For default docs
+  const [isPolling, setIsPolling] = useState(false); 
   const [error, setError] = useState(null);
 
   const pollIntervalRef = useRef(null);
@@ -310,21 +305,17 @@ const MyDocsPage = ({ onLogout }) => {
       const fetchedDocs = await apiService.getDocs();
       setDocs(fetchedDocs);
       
-      // --- SIGNUP FIX ---
-      // If this is the first load AND it's empty, start polling
-      // for the default docs.
       if (!isPolling && fetchedDocs.length === 0) {
         setIsPolling(true);
       }
       
-      // If we are polling and we find docs, stop polling
       if (isPolling && fetchedDocs.length > 0) {
         setIsPolling(false);
       }
 
     } catch (err) {
       setError(err.message);
-      setIsPolling(false); // Stop polling on error
+      setIsPolling(false); 
     } finally {
       setIsLoading(false);
     }
@@ -348,7 +339,7 @@ const MyDocsPage = ({ onLogout }) => {
     };
   }, [loadDocuments]);
 
-  // --- POLLING FOR DEFAULT DOCS (FIX) ---
+
   useEffect(() => {
     if (isPolling) {
       let pollCount = 0;
@@ -377,9 +368,7 @@ const MyDocsPage = ({ onLogout }) => {
     };
   }, [isPolling, loadDocuments]);
 
-  // --- API Handlers ---
 
-  // --- CREATE FIX ---
   const handleCreateNew = async () => {
     setIsCreating(true);
     try {
@@ -387,8 +376,6 @@ const MyDocsPage = ({ onLogout }) => {
       const uniqueTitle = `Untitled - ${new Date().toLocaleTimeString()}`;
       await apiService.createDoc(uniqueTitle);
 
-      // This is the new, reliable fix.
-      // We wait 1.5s for the processor to create the file, then refresh the list.
       setTimeout(() => {
         loadDocuments(true); // 'true' = don't show full-page loader
         setIsCreating(false);
@@ -400,8 +387,7 @@ const MyDocsPage = ({ onLogout }) => {
     }
   };
 
-  // --- DELETE FIX ---
-  // This is called by the child card AFTER a successful API call
+
   const handleDeleteSuccess = (docId) => {
     setDocs(docs.filter(doc => doc.id !== docId));
   };
@@ -410,7 +396,7 @@ const MyDocsPage = ({ onLogout }) => {
     await apiService.renameDoc(docId, newTitle);
   };
 
-  // --- Render Logic ---
+
 
   if (isLoading) {
     return <FullPageLoader message="Loading Documents..." />;
@@ -443,12 +429,11 @@ const MyDocsPage = ({ onLogout }) => {
             <DocThumbnail 
               key={doc.id} 
               doc={doc} 
-              onDeleteSuccess={handleDeleteSuccess} // <-- Pass the success handler
+              onDeleteSuccess={handleDeleteSuccess}
               onRename={handleRename}
             />
           ))}
 
-          {/* --- EMPTY STATE FIX --- */}
           {/* If there are no docs, show clean placeholders */}
           {docs.length === 0 && !isCreating && !isPolling && (
             <>

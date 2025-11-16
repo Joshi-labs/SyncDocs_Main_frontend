@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import AppHeader from '../components/AppHeader.jsx';
 
-// --- Inlined Component: UserPresenceBar ---
+
 const UserPresenceBar = () => (
   <div className="flex items-center space-x-4">
     <div className="flex items-center -space-x-2">
@@ -36,7 +36,7 @@ const UserPresenceBar = () => (
   </div>
 );
 
-// --- Inlined Component: InteractiveToolbar ---
+
 const InteractiveToolbar = () => {
   const [activeStyles, setActiveStyles] = useState(new Set());
   const editorRef = useRef(null); // Ref to the editor div
@@ -146,8 +146,7 @@ const InteractiveToolbar = () => {
   );
 };
 
-// --- Initial Content for the Editor ---
-// Updated to include all elements
+
 const initialContent = `
 <h1>Welcome to SyncDocs!</h1>
 <p>This is a <b>fully interactive</b> rich-text editor built with <i>just React and Tailwind CSS</i>, using the browser's <code>contentEditable</code> feature.</p>

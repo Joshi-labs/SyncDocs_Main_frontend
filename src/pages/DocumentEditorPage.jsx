@@ -155,18 +155,12 @@ const DocumentEditorPage = ({onLogout}) => {
 
 
 
-  // --- NEW: A handler for the share button ---
+
   const handleShareClick = () => {
-    // This is where you'd open the modal or get the real link from the API
+    // TODO: Implement share functionality
     console.log("Share button clicked!");
   };
 
-
-
-
-
-  // --- NEW: State for mock cursor position ---
-  const [mockCursorPos, setMockCursorPos] = useState(null);
 
   
   // --- Socket.io Connection ---
@@ -192,7 +186,7 @@ const DocumentEditorPage = ({onLogout}) => {
   useEffect(() => {
     if (!socket || !editorRef.current) return;
 
-    // 1. Runs once when you join.
+
     const handleRoomInfo = (data) => {
       const { content, users, selfId } = data;
       if (editorRef.current) {
@@ -203,18 +197,17 @@ const DocumentEditorPage = ({onLogout}) => {
       setCurrentUserId(selfId);
     };
 
-    // 2. Runs when a new user joins the room
+
     const handleUserJoined = (newUser) => {
       console.log('User joined:', newUser);
       setUsers((prevUsers) => [...prevUsers, newUser]);
     };
 
-    // 3. Runs when a user leaves the room
+
     const handleUserLeft = (idToRemove) => {
       console.log('User left:', idToRemove);
       setUsers((prevUsers) => prevUsers.filter(u => u.id !== idToRemove));
-      
-      // --- NEW: Also remove their cursor ---
+
       setCursors((prevCursors) => {
         const newCursors = { ...prevCursors };
         delete newCursors[idToRemove];
@@ -222,10 +215,9 @@ const DocumentEditorPage = ({onLogout}) => {
       });
     };
 
-    // 4. Listens for our delta patches
+
     const handleDocUpdated = (delta) => {
       if (editorRef.current) {
-        // ... (existing delta logic, but we need to fix cursor jump) ...
         const currentHtml = editorRef.current.innerHTML;
         const patchedHtml = applyDelta(currentHtml, delta);
         editorRef.current.innerHTML = patchedHtml;
@@ -233,7 +225,7 @@ const DocumentEditorPage = ({onLogout}) => {
       }
     };
     
-    // 5. Runs if the owner disconnects
+
     const handleRoomClosed = (message) => {
       alert(message); 
       if (editorRef.current) {
@@ -242,13 +234,13 @@ const DocumentEditorPage = ({onLogout}) => {
       socket.disconnect();
     };
     
-    // 6. Runs if the room is full
+
     const handleRoomFull = (message) => {
       alert(message);
       socket.disconnect();
     };
 
-    // --- NEW: 7. Listen for other cursors ---
+
     const handleCursorUpdated = (data) => {
       setCursors((prevCursors) => ({
         ...prevCursors,
@@ -258,7 +250,7 @@ const DocumentEditorPage = ({onLogout}) => {
         }
       }));
     };
-    // --- END NEW ---
+
 
     // Add all listeners
     socket.on('room-info', handleRoomInfo);
@@ -267,7 +259,7 @@ const DocumentEditorPage = ({onLogout}) => {
     socket.on('doc-updated', handleDocUpdated);
     socket.on('room-closed', handleRoomClosed);
     socket.on('room-full', handleRoomFull);
-    socket.on('cursor-updated', handleCursorUpdated); // --- ADD LISTENER ---
+    socket.on('cursor-updated', handleCursorUpdated);
 
     // Clean up all listeners
     return () => {
@@ -277,22 +269,22 @@ const DocumentEditorPage = ({onLogout}) => {
       socket.off('doc-updated', handleDocUpdated);
       socket.off('room-closed', handleRoomClosed);
       socket.off('room-full', handleRoomFull);
-      socket.off('cursor-updated', handleCursorUpdated); // --- ADD CLEANUP ---
+      socket.off('cursor-updated', handleCursorUpdated);
     };
   }, [socket, editorRef]);
   
 
-// --- Timer for sending changes AND cursors (UPDATED) ---
+// --- Timer for sending changes AND cursors ---
   useEffect(() => {
     if (!socket || !editorRef.current) return;
 
     const timer = setInterval(() => {
-      // --- 1. Get Current State ---
+
       const selection = window.getSelection();
       const newHtml = editorRef.current?.innerHTML;
       let cursorPosition = -1;
 
-      // --- 2. Check Cursor Position ---
+
       if (selection.rangeCount > 0 && editorRef.current.contains(selection.anchorNode)) {
         const range = selection.getRangeAt(0);
         const preCaretRange = document.createRange();
@@ -301,13 +293,13 @@ const DocumentEditorPage = ({onLogout}) => {
         cursorPosition = preCaretRange.toString().length;
       }
       
-      // --- 3. Check for Changes ---
+
       const hasDelta = newHtml !== null && newHtml !== lastContentRef.current;
       const hasNewCursor = cursorPosition !== -1 && cursorPosition !== lastSentPositionRef.current;
 
-      // --- 4. Decide What to Emit ---
+
       if (hasDelta && hasNewCursor) {
-        // --- SCENARIO 1: Typing (Both changed) ---
+
         // Send the BUNDLED event
         const delta = createDelta(lastContentRef.current, newHtml);
         socket.emit('doc-and-cursor-change', { delta, position: cursorPosition });
@@ -317,8 +309,7 @@ const DocumentEditorPage = ({onLogout}) => {
         lastSentPositionRef.current = cursorPosition;
 
       } else if (hasDelta) {
-        // --- SCENARIO 2: Only Text Changed ---
-        // (e.g., programmatic change, or cursor didn't move)
+
         const delta = createDelta(lastContentRef.current, newHtml);
         socket.emit('doc-delta-change', delta);
         
@@ -326,14 +317,12 @@ const DocumentEditorPage = ({onLogout}) => {
         lastContentRef.current = newHtml;
 
       } else if (hasNewCursor) {
-        // --- SCENARIO 3: Only Cursor Changed ---
-        // (e.g., user just clicked somewhere)
+
         socket.emit('cursor-change', cursorPosition);
         
         // Update local "truth"
         lastSentPositionRef.current = cursorPosition;
       }
-      // --- (SCENARIO 4: Nothing changed -> do nothing) ---
 
     }, 330);
 
@@ -346,29 +335,20 @@ const DocumentEditorPage = ({onLogout}) => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       
-{/* --- Render all cursors --- */}
+      {/* --- Render all cursors --- */}
       {Object.entries(cursors).map(([id, cursorData]) => {
         
-        // --- THIS IS THE FIX ---
-        // 1. Guard against invalid data from the server.
         if (!cursorData || cursorData.position < 0) {
           return null;
         }
 
-        // 2. Guard against the race condition (stale DOM).
-        // Get the total text length of the editor *right now*.
         const currentEditorLength = editorRef.current?.textContent.length || 0;
         if (cursorData.position > currentEditorLength) {
-          // The cursor index is further than our DOM. This is the race
-          // condition. Don't render this cursor for this frame.
           return null; 
         }
-        // --- END OF FIX ---
 
-        // Now it's safe to try and get the coordinates.
         const pos = getCoordsFromIndex(editorRef.current, cursorData.position);
         
-        // The utility function can still fail, so we check its result.
         if (!pos) return null;
 
         return (

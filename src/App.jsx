@@ -6,7 +6,7 @@ import LandingPage from './pages/LandingPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import MyDocsPage from './pages/MyDocsPage.jsx';
 import HowItWorksPage from './pages/HowItWorksPage.jsx';
-import DocumentEditorPage from './pages/DocumentEditorPage.jsx'; // <-- Already here
+import DocumentEditorPage from './pages/DocumentEditorPage.jsx';
 
 // --- Helper ---
 const getAuthToken = () => localStorage.getItem('token');

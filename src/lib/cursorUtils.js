@@ -9,7 +9,6 @@
 export const getCoordsFromIndex = (editor, index) => {
   if (index < 0 || !editor) return null;
 
-  // Handle index 0 explicitly as it's a common edge case
   if (index === 0) {
     try {
       const range = document.createRange();
@@ -32,14 +31,11 @@ export const getCoordsFromIndex = (editor, index) => {
       const offset = index - charCount;
 
       // --- CRASH PREVENTION ---
-      // This is the bounds check. If offset is invalid for this
-      // specific node, we must not proceed.
       if (offset < 0 || offset > nodeLength) {
         // This indicates a bug in our logic, but we must not crash.
         console.warn(`Invalid offset computed: ${offset} for node with length ${nodeLength}`);
         return null;
       }
-      // --- END CRASH PREVENTION ---
 
       try {
         const range = document.createRange();
@@ -52,7 +48,6 @@ export const getCoordsFromIndex = (editor, index) => {
           return { x: rect.left - 1, y: rect.top, height: rect.height };
         }
       } catch (e) {
-        // This can fail if the DOM is in a weird state.
         console.warn("Error creating range in text node:", e);
         return null;
       }
@@ -65,7 +60,7 @@ export const getCoordsFromIndex = (editor, index) => {
      try {
       const range = document.createRange();
       range.selectNodeContents(editor);
-      range.collapse(false); // Collapse to the end
+      range.collapse(false); 
       const rect = range.getBoundingClientRect();
       return { x: rect.left - 1, y: rect.top, height: rect.height };
     } catch (e) {
@@ -74,5 +69,5 @@ export const getCoordsFromIndex = (editor, index) => {
     }
   }
 
-  return null; // Index not found
+  return null; 
 };

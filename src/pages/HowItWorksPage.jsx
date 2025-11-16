@@ -6,10 +6,7 @@ import {
   Github, Twitter, Linkedin, ArrowDown, Terminal, HardDrive
 } from 'lucide-react';
 
-/**
- * PublicHeader Component
- * A self-contained header for our public-facing pages (Home, How It Works)
- */
+
 const PublicHeader = () => (
   <header className="w-full bg-white/90 border-b border-gray-200 sticky top-0 z-50 backdrop-blur-lg">
     <nav className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
@@ -39,10 +36,7 @@ const PublicHeader = () => (
   </header>
 );
 
-/**
- * PublicFooter Component
- * A self-contained, professional footer.
- */
+
 const PublicFooter = () => (
   <footer className="w-full bg-gray-900 text-gray-400 py-16">
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
@@ -88,11 +82,7 @@ const PublicFooter = () => (
   </footer>
 );
 
-/**
- * HowItWorksPage Component
- * The main component for this route, explaining our system.
- * Sidebar has been removed, and content is massively expanded.
- */
+
 const HowItWorksPage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col antialiased font-sans">
@@ -364,10 +354,7 @@ const HowItWorksPage = () => {
   );
 };
 
-/**
- * FlowStep Component
- * A self-contained card for the "Data Flow" section.
- */
+
 const FlowStep = ({ num, title, text, icon }) => (
   <div className="flex items-start space-x-6">
     <div className="flex-shrink-0 flex flex-col items-center">

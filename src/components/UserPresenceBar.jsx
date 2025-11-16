@@ -1,20 +1,16 @@
 import React from 'react';
 import { Crown, Share2 } from 'lucide-react';
-// --- 1. IMPORT your new util ---
 import { getUserColor } from '../lib/colorUtils';
 
-// --- 2. DELETE the old getAvatarColor function that was here ---
 
-// The new dynamic component
 const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
   
-  // We sort the array to show "You" (the Lion) first.
   const sortedUsers = [...users].sort((a, b) => {
     if (a.id === currentUserId) return -1;
     if (b.id === currentUserId) return 1;
-    if (a.isPrimary && !b.isPrimary) return -1; // Keep other Lions at front
+    if (a.isPrimary && !b.isPrimary) return -1; 
     if (!a.isPrimary && b.isPrimary) return 1;
-    return a.name.localeCompare(b.name); // Sort others by name
+    return a.name.localeCompare(b.name); 
   });
 
   return (
@@ -27,7 +23,6 @@ const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
           const isLion = user.isPrimary;
           const title = isYou ? `${user.name} (You)` : user.name;
           
-          // --- 3. CHANGE this line to use the new function ---
           const color = isLion ? 'bg-yellow-500' : getUserColor(user.name).tw;
           
           const initial = user.name ? user.name[0].toUpperCase() : '?';
@@ -45,7 +40,7 @@ const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
         })}
       </div>
       
-      {/* Share Button (now uses the prop) */}
+      {/* Share Button */}
       <button 
         onClick={onShareClick}
         className="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors"

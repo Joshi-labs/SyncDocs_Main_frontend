@@ -5,10 +5,7 @@ import {
   Github, Twitter, Linkedin, CheckCircle 
 } from 'lucide-react';
 
-/**
- * FeatureCard Component
- * Inlined here to make the LandingPage self-contained.
- */
+
 const FeatureCard = ({ icon, title, description }) => (
   <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 transform transition-transform duration-300 hover:scale-105">
     <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-5">
@@ -19,10 +16,7 @@ const FeatureCard = ({ icon, title, description }) => (
   </div>
 );
 
-/**
- * LandingPage Component
- * A full, professional-grade landing page.
- */
+
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col antialiased font-sans">
