@@ -3,7 +3,7 @@ import { Crown, Share2 } from 'lucide-react';
 import { getUserColor } from '../lib/colorUtils';
 
 
-const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
+const UserPresenceBar = ({ users = [], currentUserId, onShareClick, shareText, isShared}) => {
   
   const sortedUsers = [...users].sort((a, b) => {
     if (a.id === currentUserId) return -1;
@@ -41,13 +41,16 @@ const UserPresenceBar = ({ users = [], currentUserId, onShareClick }) => {
       </div>
       
       {/* Share Button */}
-      <button 
-        onClick={onShareClick}
-        className="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors"
-      >
-        <Share2 className="w-4 h-4" />
-        <span>Share</span>
-      </button>
+      {!isShared && (
+        <button 
+          onClick={onShareClick}
+          className="flex items-center space-x-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors"
+        >
+          <Share2 className="w-4 h-4" />
+          <span>{shareText}</span>
+        </button>
+      )}
+
     </div>
   );
 };

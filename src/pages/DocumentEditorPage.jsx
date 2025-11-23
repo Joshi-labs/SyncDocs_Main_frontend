@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Link } from 'react-router-dom';
 import { 
@@ -137,6 +138,8 @@ const DocumentEditorPage = ({onLogout}) => {
 
   const [users, setUsers] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [shareText, setShareText] = useState("Share");
+
   
   // This state will hold all *other* users' cursors
   const [cursors, setCursors] = useState({});
@@ -144,22 +147,71 @@ const DocumentEditorPage = ({onLogout}) => {
   // This ref tracks what we last sent to the server
   const lastSentPositionRef = useRef(null);
 
-/*
-  const currentUserId = 'user-1-abc';
-  const [users, setUsers] = useState([
-    { id: 'user-1-abc', name: 'You', isPrimary: true },
-    { id: 'user-2-def', name: 'Tiger', isPrimary: false },
-    { id: 'user-3-ghi', name: 'Hippo', isPrimary: false },
-  ]);
-*/
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+
+
+  const roomKey = params.get("roomKey");
+  const isShared = location.pathname.startsWith("/shared/");
+  const token = localStorage.getItem("token");
+  const docId = location.pathname.split("/shared/")[1] || location.pathname.split("/doc/")[1];
+
+
+
+  useEffect(() => {
+
+    console.log(isShared, docId, roomKey, token);
+
+    if (!isShared) return;   // only validate shared routes
+
+    if(token) return; // authenticated users can access
+
+    if (!docId) {
+      alert("Invalid shared link: missing document ID.");
+      return;
+    }
+
+    if (!roomKey) {
+      alert("Invalid shared link: missing room key.");
+      return;
+    }
+  }, [isShared, docId, roomKey, token]);
 
 
 
 
-  const handleShareClick = () => {
-    // TODO: Implement share functionality
-    console.log("Share button clicked!");
-  };
+const handleShareClick = async () => {
+  if (!docId) {
+    alert("Document not loaded");
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:5001/api/docs/${docId}/share-url`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (!data.url) {
+      alert(data.error || "Failed to fetch share link");
+      return;
+    }
+
+    await navigator.clipboard.writeText(data.url);
+
+    // Update button text
+    setShareText("Copied");
+    setTimeout(() => setShareText("Share"), 3000);
+
+  } catch (err) {
+    alert("Error generating share link");
+  }
+};
+
+
 
 
   
@@ -170,12 +222,19 @@ const DocumentEditorPage = ({onLogout}) => {
       lastContentRef.current = "<p>Loading document...</p>";
     }
 
-    const s = io('http://localhost:5001');
+    const s = io("http://localhost:5001", {
+    auth: {
+      token: roomKey ? undefined : token,
+      docId: docId,
+      roomKey: roomKey
+    }
+    });
+
+
     setSocket(s);
     console.log("Connecting to socket server...");
     
-    const testDocId = 'my-first-document';
-    s.emit('join-room', testDocId);
+    s.emit('join-room', docId);
 
     return () => {
       s.disconnect();
@@ -274,7 +333,7 @@ const DocumentEditorPage = ({onLogout}) => {
   }, [socket, editorRef]);
   
 
-// --- Timer for sending changes AND cursors ---
+  // --- Timer for sending changes AND cursors ---
   useEffect(() => {
     if (!socket || !editorRef.current) return;
 
@@ -331,6 +390,39 @@ const DocumentEditorPage = ({onLogout}) => {
     };
   }, [socket, editorRef]);
 
+  //update the cursor positions on scroll or periodically
+  useEffect(() => {
+  if (!editorRef.current) return;
+
+  const updateCursorPositions = () => {
+    setCursors(prev => {
+      const updated = {};
+
+      for (const [id, c] of Object.entries(prev)) {
+        const pos = getCoordsFromIndex(editorRef.current, c.position);
+        if (pos) {
+          updated[id] = { ...c, coords: pos };
+        }
+      }
+
+      return updated;
+    });
+  };
+
+  // Update on scroll
+  const container = editorRef.current.parentElement;
+  container.addEventListener("scroll", updateCursorPositions);
+
+  // Update periodically (fallback)
+  const timer = setInterval(updateCursorPositions, 200);
+
+  return () => {
+    container.removeEventListener("scroll", updateCursorPositions);
+    clearInterval(timer);
+  };
+}, [editorRef]);
+
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -375,6 +467,8 @@ const DocumentEditorPage = ({onLogout}) => {
               users={users}
               currentUserId={currentUserId}
               onShareClick={handleShareClick}
+              shareText={shareText}
+              isShared={isShared}
             />
           </div>
           <InteractiveToolbar />
