@@ -16,6 +16,7 @@ import { createDelta, applyDelta } from '../lib/delta.js';
 import UserPresenceBar from '../components/UserPresenceBar.jsx';
 import ArtificialCursor from '../components/ArtificialCursor.jsx';
 import { getCoordsFromIndex } from '../lib/cursorUtils.js';
+import RoomError from '../components/RoomError.jsx';
 
 
 
@@ -130,6 +131,8 @@ const InteractiveToolbar = () => {
   );
 };
 
+
+
 const DocumentEditorPage = ({onLogout}) => {
   const editorRef = useRef(null);
   const [socket, setSocket] = useState(null);
@@ -139,6 +142,8 @@ const DocumentEditorPage = ({onLogout}) => {
   const [users, setUsers] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [shareText, setShareText] = useState("Share");
+  const [errorMessage, setErrorMessage] = useState(null);
+
 
   
   // This state will hold all *other* users' cursors
@@ -233,6 +238,23 @@ const handleShareClick = async () => {
 
     setSocket(s);
     console.log("Connecting to socket server...");
+
+    s.on("connect_error", (err) => {
+      console.error("Socket auth error:", err.message);
+
+      if (err.message.includes("Owner offline")) {
+        setErrorMessage("This room does not exist or the owner is offline.");
+      } else if (err.message.includes("Invalid room key")) {
+        setErrorMessage("The room key is invalid.");
+      } else if (err.message.includes("Authentication required")) {
+        setErrorMessage("You are not allowed to access this room.");
+      } else {
+        setErrorMessage("Failed to join the room. " + err.message);
+      }
+
+      s.disconnect();
+    });
+
     
     s.emit('join-room', docId);
 
@@ -286,7 +308,7 @@ const handleShareClick = async () => {
     
 
     const handleRoomClosed = (message) => {
-      alert(message); 
+      setErrorMessage("The room has been closed by the owner.");
       if (editorRef.current) {
         editorRef.current.contentEditable = false;
       }
@@ -295,7 +317,7 @@ const handleShareClick = async () => {
     
 
     const handleRoomFull = (message) => {
-      alert(message);
+      setErrorMessage("The room is full. Cannot join at this time.");
       socket.disconnect();
     };
 
@@ -455,6 +477,12 @@ const handleShareClick = async () => {
       <EditorStyles/>
     
       <AppHeader onLogout={onLogout} />
+
+      {errorMessage ? (
+        <RoomError message={errorMessage} />
+      ) 
+      : 
+      (
       
       <div className="flex-grow w-full flex flex-col items-center py-8 overflow-hidden">
         
@@ -487,6 +515,10 @@ const handleShareClick = async () => {
           />
         </div>
       </div>
+
+      )
+      }
+
     </div>
   );
 };
