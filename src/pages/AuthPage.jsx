@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Users, LogIn, Lock, AlertTriangle, Loader2 } from 'lucide-react';
 
 
-const BACKEND_URL = 'http://localhost:5001';
+//const BACKEND_URL = 'http://localhost:5001';
+const BACKEND_URL = 'https://aws.vpjoshi.in/syncdocs';
 const PROJECT_ID = "SyncDocs";
 
 

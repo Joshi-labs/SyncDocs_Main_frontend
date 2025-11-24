@@ -192,7 +192,9 @@ const handleShareClick = async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:5001/api/docs/${docId}/share-url`, {
+    //'';
+    // const res = await fetch(`http://localhost:5001/api/docs/${docId}/share-url`, {
+    const res = await fetch(`https://aws.vpjoshi.in/syncdocs/api/docs/${docId}/share-url`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -227,13 +229,26 @@ const handleShareClick = async () => {
       lastContentRef.current = "<p>Loading document...</p>";
     }
 
-    const s = io("http://localhost:5001", {
-    auth: {
-      token: roomKey ? undefined : token,
-      docId: docId,
-      roomKey: roomKey
-    }
+    //const s = io("http://localhost:5001", {
+    //const s = io("https://aws.vpjoshi.in/syncdocs", {
+      
+    //auth: {
+    //  token: roomKey ? undefined : token,
+    //  docId: docId,
+    //  roomKey: roomKey
+    //}
+    //});
+
+    const s = io("https://aws.vpjoshi.in", {
+      path: "/syncdocs/socket.io",
+      transports: ["websocket"], // very important
+      auth: {
+        token: roomKey ? undefined : token,
+        docId: docId,
+        roomKey: roomKey
+      }
     });
+
 
 
     setSocket(s);

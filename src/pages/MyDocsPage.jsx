@@ -6,7 +6,10 @@ import {
 } from 'lucide-react';
 
 // --- Configuration ---
-const SERVER_URL = 'http://localhost:5001';
+
+//const SERVER_URL = 'http://localhost:5001';
+const SERVER_URL = 'https://aws.vpjoshi.in/syncdocs';
+
 
 
 const getAuthToken = () => localStorage.getItem('token');
