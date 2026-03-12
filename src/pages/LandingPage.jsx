@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Zap, Share2, FileText, Clock, ShieldCheck, Download, 
+  Zap, Share2, FileText, Clock, ShieldCheck, Download,CloudCog, RefreshCcw, 
   Github, Twitter, Linkedin, CheckCircle 
 } from 'lucide-react';
 
@@ -85,9 +85,9 @@ const LandingPage = () => {
             {/* Illustration / Image */}
             <div className="flex justify-center">
               <img
-                src="https://placehold.co/600x450/E0E7FF/3730A3?text=Real-time+Collaboration\nIllustration"
-                alt="Real-time Collaboration Illustration"
-                className="rounded-lg shadow-2xl"
+                src="/main.png" 
+                alt="Real-time Collaboration Illustration depicting event stream"
+                className="rounded-lg shadow-2xl w-full md:w-3/4 lg:w-4/5"
                 onError={(e) => e.target.style.display='none'}
               />
             </div>
@@ -113,8 +113,8 @@ const LandingPage = () => {
               />
               <FeatureCard
                 icon={<Share2 className="w-8 h-8 text-indigo-600" />}
-                title="Simple Sharing"
-                description="Share with a single, secure link. Control who can view, comment, or edit with ease."
+                title="Invite-Only Sessions"
+                description="Collaboration is strictly invite-only. Real-time editing sessions are activated and visible to invited guests only when the document owner is actively online."
               />
               <FeatureCard
                 icon={<FileText className="w-8 h-8 text-indigo-600" />}
@@ -122,19 +122,19 @@ const LandingPage = () => {
                 description="A minimal, distraction-free interface that lets you and your team focus on the content."
               />
               <FeatureCard
-                icon={<Clock className="w-8 h-8 text-indigo-600" />}
-                title="Version History"
-                description="Never lose your work. Automatically save versions and restore to any previous point in time."
-              />
-              <FeatureCard
                 icon={<ShieldCheck className="w-8 h-8 text-indigo-600" />}
                 title="Secure & Private"
                 description="Your documents are encrypted and your data is yours. We're built on secure, modern architecture."
               />
               <FeatureCard
-                icon={<Download className="w-8 h-8 text-indigo-600" />}
-                title="Export Anywhere"
-                description="Easily export your documents to PDF, Markdown, or plain text to use in other applications."
+                icon={<CloudCog className="w-8 h-8 text-indigo-600" />}
+                title="Kafka-Powered Scale"
+                description="Built on Apache Kafka for high-throughput event streaming, ensuring near-infinite scalability and handling massive concurrent users."
+              />
+              <FeatureCard
+                icon={<RefreshCcw className="w-8 h-8 text-indigo-600" />}
+                title="Fault-Tolerant System"
+                description="Redundant, distributed architecture means if one component fails, your collaboration continues uninterrupted and your data remains safe."
               />
             </div>
           </div>
@@ -212,19 +212,17 @@ const LandingPage = () => {
             <ul className="space-y-3">
               <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
               <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-              <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
               <li><Link to="/auth" className="hover:text-white transition-colors">Sign Up</Link></li>
             </ul>
           </div>
           
-          {/* Column 3: Company */}
+          {/* Column 3: About Us */}
           <div>
-            <h5 className="text-lg font-semibold text-white mb-4">Company</h5>
+            <h5 className="text-lg font-semibold text-white mb-4">About Us</h5>
             <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              <li><a href="https://vpjoshi.in" className="hover:text-white transition-colors">Portfolio</a></li>
+              <li><a href="https://docs.vpjoshi.in" className="hover:text-white transition-colors">Docs</a></li>
+              <li><a href="mailto:admin@vpjoshi.in" className="hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
           
@@ -232,13 +230,13 @@ const LandingPage = () => {
           <div>
             <h5 className="text-lg font-semibold text-white mb-4">Legal</h5>
             <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="/#/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="/#/terms-of-service" className="hover:text-white transition-colors">Terms of Service</a></li>
             </ul>
           </div>
         </div>
         <div className="max-w-7xl mx-auto border-t border-gray-700 mt-12 pt-8 px-6 text-center">
-          <p>&copy; {new Date().getFullYear()} SyncDocs. A Hackathon Project. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} SyncDocs. All rights reserved.</p>
         </div>
       </footer>
     </div>

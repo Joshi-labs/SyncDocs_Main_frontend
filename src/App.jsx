@@ -5,8 +5,10 @@ import { HashRouter, Routes, Route, Link, useNavigate, Navigate, Outlet } from '
 import LandingPage from './pages/LandingPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import MyDocsPage from './pages/MyDocsPage.jsx';
-import HowItWorksPage from './pages/HowItWorksPage.jsx';
+import X_HowItWorks from './pages/X_HowItWorks.jsx';
 import DocumentEditorPage from './pages/DocumentEditorPage.jsx';
+import X_PrivacyPolicy from './pages/X_PrivacyPolicy.jsx';
+import X_TermsOfService from './pages/X_TermsOfService.jsx';
 
 // --- Helper ---
 const getAuthToken = () => localStorage.getItem('token');
@@ -29,7 +31,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/how-it-works" element={<X_HowItWorks />} />
         
         {/* Auth Route */}
         <Route 
@@ -55,6 +57,10 @@ function App() {
         />
 
         <Route path="/shared/:id" element={<DocumentEditorPage onLogout={handleLogout} />}/>
+
+        {/* Extras */}
+        <Route path="/privacy-policy" element={<X_PrivacyPolicy/>}/>
+        <Route path="/terms-of-service" element={<X_TermsOfService/>}/>
         
         {/* Catch-alls */}
         {isAuthenticated && <Route path="*" element={<Navigate to="/myDocs" />} />}

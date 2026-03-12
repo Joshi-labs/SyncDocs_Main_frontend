@@ -83,7 +83,7 @@ const PublicFooter = () => (
 );
 
 
-const HowItWorksPage = () => {
+const X_HowItWorksPage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col antialiased font-sans">
       <PublicHeader />
@@ -377,4 +377,4 @@ const FlowStep = ({ num, title, text, icon }) => (
   </div>
 );
 
-export default HowItWorksPage;
+export default X_HowItWorksPage;
