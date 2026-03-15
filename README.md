@@ -248,4 +248,4 @@ sync-docs/
 
 ## License
 
-MIT © [Vansh Prakash Joshi](https://vpjoshi.in)
+MIT © [Vishwash Prasad Joshi](https://vpjoshi.in)
